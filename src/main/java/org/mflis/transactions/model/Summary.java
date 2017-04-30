@@ -4,10 +4,10 @@ import lombok.Value;
 
 @Value
 public class Summary {
-    Long toCharge;
-    Long settlementValue;
+    String currency;
     String type;
     Integer price;
     Integer commission;
-    String currency;
+    Long toCharge;
+    Long settlementValue;
 }

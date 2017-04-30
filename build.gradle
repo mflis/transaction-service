@@ -1,5 +1,6 @@
-plugins{
+plugins {
     id 'java'
+    id 'groovy'
     id 'org.springframework.boot' version '1.5.3.RELEASE'
 }
 
@@ -16,6 +17,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.10'
     testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4-rc-4'
 
 }
