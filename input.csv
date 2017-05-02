@@ -1,0 +1,6 @@
+1,trip,20,5,EUR,true
+2,ticket,10,2,EUR,true
+3,trip,80,20,PLN,false
+4,transfer,100,0,PLN,true
+5,trip,50,18,EUR,true
+6,trip,120,5,PLN,true

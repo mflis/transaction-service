@@ -18,11 +18,11 @@ class FileReaderTest extends Specification {
 
         def transactionsPath = transactions.toPath()
         transactions.deleteOnExit()
-        def reader = new FileReader()
+        def reader = new FileReader(transactionsPath)
 
         expect:
         def sum = new Summary(currency, type, price, commission, toCharge, settlement)
-        reader.prepareSummary(currency, type, transactionsPath) == sum
+        reader.prepareSummary(currency, type) == sum
 
         where:
         currency | type       | price | commission | toCharge | settlement

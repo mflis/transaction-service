@@ -1,5 +1,6 @@
 package org.mflis.transactions.input;
 
+import lombok.AllArgsConstructor;
 import org.mflis.transactions.model.Column;
 import org.mflis.transactions.model.Summary;
 
@@ -13,10 +14,13 @@ import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class FileReader implements Reader {
 
+    private Path source;
+
     @Override
-    public Summary prepareSummary(String currency, String type, Path source) throws IOException {
+    public Summary prepareSummary(String currency, String type) throws IOException {
         BufferedReader br = Files.newBufferedReader(source);
 
         Collector<Column, Summary, Summary> summaryCollector = new SummaryCollector();
