@@ -14,7 +14,7 @@ class FileReaderTest extends Specification {
 3,trip,80,20,PLN,false 
 4,transfer,100,0,PLN,true 
 5,trip,50,18,EUR,true 
-6,trip,120,5,PLN,false'''
+6,trip,120,5,PLN,true'''
 
         def transactionsPath = transactions.toPath()
         transactions.deleteOnExit()
@@ -28,7 +28,7 @@ class FileReaderTest extends Specification {
         currency | type       | price | commission | toCharge | settlement
         "EUR"    | "trip"     | 70    | 23         | 0        | 47
         "EUR"    | "ticket"   | 10    | 2          | 0        | 8
-        "PLN"    | "trip"     | 200   | 25         | 200      | -25
+        "PLN"    | "trip"     | 200   | 25         | 80       | 95
         "PLN"    | "transfer" | 100   | 0          | 0        | 100
     }
 
