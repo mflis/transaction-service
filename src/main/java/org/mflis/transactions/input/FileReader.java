@@ -7,8 +7,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class FileReader implements Reader {
 
@@ -26,16 +29,16 @@ public class FileReader implements Reader {
     }
 
     private Optional<Column> mapColumn(String line) {
-        String[] columns = line.split(",");
-        if (columns.length != Fields.values().length)
+        List<String> columns = Arrays.stream(line.split(",")).map(String::trim).collect(Collectors.toList());
+        if (columns.size() != Fields.values().length)
             return Optional.empty();
 
-        int id = Integer.parseInt(columns[Fields.id.ordinal()]);
-        String type = columns[Fields.type.ordinal()];
-        int price = Integer.parseInt(columns[Fields.price.ordinal()]);
-        int commission = Integer.parseInt(columns[Fields.commission.ordinal()]);
-        String currency = columns[Fields.currency.ordinal()];
-        boolean isPaid = Boolean.valueOf(columns[Fields.is_paid.ordinal()].trim());
+        int id = Integer.parseInt(columns.get(Fields.id.ordinal()));
+        String type = columns.get(Fields.type.ordinal());
+        int price = Integer.parseInt(columns.get(Fields.price.ordinal()));
+        int commission = Integer.parseInt(columns.get(Fields.commission.ordinal()));
+        String currency = columns.get(Fields.currency.ordinal());
+        boolean isPaid = Boolean.valueOf(columns.get(Fields.is_paid.ordinal()).trim());
 
         return Optional.of(new Column(id, type, price, commission, currency, isPaid));
     }
