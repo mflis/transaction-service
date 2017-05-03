@@ -18,8 +18,8 @@ public class SummaryController {
 
     private Reader sourceReader;
 
-    SummaryController(@Value("${sourcePath}") Path source) {
-        sourceReader = new FileReader(source);
+    SummaryController(@Value("${sourcePath}") Path source, @Value("${strictFileStructure}") boolean strictFileStructure) {
+        sourceReader = new FileReader(source, strictFileStructure);
     }
 
     @RequestMapping("/summary")
