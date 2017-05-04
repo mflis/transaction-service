@@ -6,13 +6,16 @@ import org.mflis.transactions.model.Summary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@Validated
 @RestController
 public class SummaryController {
 
@@ -23,9 +26,7 @@ public class SummaryController {
     }
 
     @RequestMapping("/summary")
-    public ResponseEntity<Summary> getSummary(@RequestParam("currency") String currency, @RequestParam("type") String type) {
-        if (currency.length() != 3)
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<Summary> getSummary(@RequestParam("currency") @Pattern(regexp = "\\w{3}", message = "not a currency") String currency, @RequestParam("type") String type) {
         try {
             Summary summary = sourceReader.prepareSummary(currency.toUpperCase(), type);
             if (summary.getCurrency().isEmpty())
