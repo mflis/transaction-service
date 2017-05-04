@@ -11,13 +11,14 @@ class FileReaderTest extends Specification {
     def "processing valid file yields correct results"() {
 
         given:
-        def validText = '''1,trip,20,5,EUR,true 
+        def inputText = '''1,trip,20,5,EUR,true 
 2,ticket,10,2,EUR,true 
 3,trip,80,20,PLN,false 
 4,transfer,100,0,PLN,true 
 5,trip,50,18,EUR,true 
 6,trip,120,5,PLN,true'''
-        def reader = prepareReader(validText, true)
+
+        def reader = prepareReader(inputText, true)
 
         expect:
         def sum = new Summary(currency, type, price, commission, toCharge, settlement)
@@ -33,11 +34,11 @@ class FileReaderTest extends Specification {
 
     def "too few columns in line causes  exception when strictFileStructure=true"() {
 
-        given: "2'nd line is missing last column"
-        def invalidText = '''1,trip,20,5,EUR,true 
+        given: "last column is missing in  2'nd line "
+        def inputText = '''1,trip,20,5,EUR,true 
 2,ticket,10,2,EUR
 3,trip,80,20,PLN,false'''
-        def reader = prepareReader(invalidText, true)
+        def reader = prepareReader(inputText, true)
 
         when:
         reader.prepareSummary("EUR", "trip")
@@ -46,13 +47,14 @@ class FileReaderTest extends Specification {
         thrown(FileProcessingException)
     }
 
-    def "too many columns in line causes  exception when strictFileStructure=true"() {
+    def "too many columns in line causes exception when strictFileStructure=true"() {
 
         given: "2'nd line has one extra column"
-        def invalidText = '''1,trip,20,5,EUR,true 
+        def inputText = '''1,trip,20,5,EUR,true 
 2,ticket,10,2,EUR,true,123
 3,trip,80,20,PLN,false'''
-        def reader = prepareReader(invalidText, true)
+
+        def reader = prepareReader(inputText, true)
 
         when:
         reader.prepareSummary("EUR", "trip")
@@ -61,30 +63,18 @@ class FileReaderTest extends Specification {
         thrown(FileProcessingException)
     }
 
-
-    FileReader prepareReader(String text, boolean strictFileStructure) {
-        def transactions = new File('transactions.csv')
-        transactions.text = text
-        def transactionsPath = transactions.toPath()
-        transactions.deleteOnExit()
-        return new FileReader(transactionsPath, strictFileStructure)
-    }
 
     def "too many columns in line causes  logging waring, and  normal processing when strictFileStructure=false"() {
 
-        given: "each line has one extra column"
+        given: "each line has one extra column (the last column)"
         def validText = '''1,trip,20,5,EUR,true ,123
 2,ticket,10,2,EUR,true ,123
 3,trip,80,20,PLN,false ,123
 4,transfer,100,0,PLN,true ,123
 5,trip,50,18,EUR,true ,123
 6,trip,120,5,PLN,true,123'''
+
         FileReader reader = prepareReader(validText, false)
-
-        and:
-        def logger = Mock(Logger)
-        reader.log = logger
-
 
         when:
         def summary = reader.prepareSummary(currency, type)
@@ -105,18 +95,14 @@ class FileReaderTest extends Specification {
     def "too few columns in line causes  logging waring, and  skipping this line  in processing when strictFileStructure=false"() {
 
         given: "1'st line has removed price column"
-        def validText = '''1,trip,5,EUR,true
+        def inputText = '''1,trip,5,EUR,true
 2,ticket,10,2,EUR,true 
 3,trip,80,20,PLN,false 
 4,transfer,100,0,PLN,true 
 5,trip,50,18,EUR,true 
 6,trip,120,5,PLN,true'''
-        FileReader reader = prepareReader(validText, false)
 
-        and:
-        def logger = Mock(Logger)
-        reader.log = logger
-
+        FileReader reader = prepareReader(inputText, false)
 
         when:
         def summary = reader.prepareSummary(currency, type)
@@ -138,22 +124,17 @@ class FileReaderTest extends Specification {
     def "pattern validation failure causes skipping line logging warning when strictFileStructure=false"() {
 
         given: "currency in 1'st line not matching pattern (4 letters)"
-        def validText = '''1,trip,20,5,EURO,true
+
+        def inputText = '''1,trip,20,5,EURO,true
 2,ticket,10,2,EUR,true 
 3,trip,80,20,PLN,false 
 4,transfer,100,0,PLN,true 
 5,trip,50,18,EUR,true 
 6,trip,120,5,PLN,true'''
-        FileReader reader = prepareReader(validText, false)
-
-        and:
-        def logger = Mock(Logger)
-        reader.log = logger
-
+        FileReader reader = prepareReader(inputText, false)
 
         when:
         def summary = reader.prepareSummary(currency, type)
-
 
         then:
         summary == new Summary(currency, type, price, commission, toCharge, settlement)
@@ -184,5 +165,16 @@ class FileReaderTest extends Specification {
         thrown(FileProcessingException)
     }
 
+    FileReader prepareReader(String text, boolean strictFileStructure) {
+        def transactions = new File('transactions.csv')
+        transactions.text = text
+        def transactionsPath = transactions.toPath()
+        transactions.deleteOnExit()
+        def reader = new FileReader(transactionsPath, strictFileStructure)
+        def logger = Mock(Logger)
+        reader.log = logger
+
+        return reader
+    }
 }
 
