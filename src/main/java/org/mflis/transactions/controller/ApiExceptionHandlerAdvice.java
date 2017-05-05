@@ -1,5 +1,6 @@
-package org.mflis.transactions;
+package org.mflis.transactions.controller;
 
+import org.mflis.transactions.input.FileProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,5 +21,13 @@ class ApiExceptionHandlerAdvice {
     String exception(ConstraintViolationException ex) {
         return ex.getConstraintViolations().stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(","));
     }
+
+    @ExceptionHandler(value = FileProcessingException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public @ResponseBody
+    String exception(FileProcessingException ex) {
+        return ex.getMessage();
+    }
+
 
 }
