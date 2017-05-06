@@ -41,3 +41,12 @@ Output should accessible via RESTful api. Parameters for query are: `currency` a
 Example: `http://localhost:8080/summary?currency=EUR&type=trip`
 
 This query should be responded with information from one row of summary with matching `currency` and `type`
+
+## Notes about current implementation
+- Project uses [lombok](https://projectlombok.org/) for getter/setter/etc generation. Ino order to let IDE know about generated metehds [plugin](https://github.com/mplushnikov/lombok-intellij-plugin#installation) is needed
+
+### `application.properties`
+ - `sourcePath` - location of input file
+ - `strictFileStructure` - config option telling about validity of input file
+   - `true` - input has to have exactly 6 colums as in specs and any error in validation proces causes error response to client
+   - `false` - when input has more than 6 colums it is processed as normal. When it has less columns or validation error occurs, this line is skipped in summary generation process
